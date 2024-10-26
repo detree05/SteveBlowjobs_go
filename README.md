@@ -1,6 +1,7 @@
-# SteveBlowjobs_go
+# [SteveBlowjobs_go](https://vk.com/wall-218375169_13264)
 
-Count how many times the specific word occurs in the comment section of every post made in the vk.com/it_roll group
+> [!NOTE]
+> Count how many times the specific word occurs in the comment section of every post made in the [it_roll](https://vk.com/it_roll) group
  
 ## Installation and execution steps
 
