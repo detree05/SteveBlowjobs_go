@@ -1,4 +1,6 @@
 # SteveBlowjobs_go
+
+Count how many times the specific word occurs in the comment section of every post made in the vk.com/it_roll group
  
 ## Installation and execution steps
 
