@@ -9,9 +9,16 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
-const accessToken = "VK API Token"
+type Configuration struct {
+	API_Token string
+}
+
+var Config Configuration
+
 const groupId int = -218375169
 
 func apiGetWall(count, offset int) (map[string]interface{}, error) {
@@ -20,7 +27,7 @@ func apiGetWall(count, offset int) (map[string]interface{}, error) {
 	urlParameters := url.Values{}
 
 	headers := map[string]string{
-		"Authorization": fmt.Sprintf("Bearer %s", accessToken),
+		"Authorization": fmt.Sprintf("Bearer %s", Config.API_Token),
 	}
 
 	parameters := map[string]string{
@@ -67,7 +74,7 @@ func apiGetComms(postId int) (map[string]interface{}, error) {
 	urlParameters := url.Values{}
 
 	headers := map[string]string{
-		"Authorization": fmt.Sprintf("Bearer %s", accessToken),
+		"Authorization": fmt.Sprintf("Bearer %s", Config.API_Token),
 	}
 
 	parameters := map[string]string{
@@ -110,6 +117,12 @@ func apiGetComms(postId int) (map[string]interface{}, error) {
 func main() {
 	mainTime := time.Now()
 
+	viper.AddConfigPath("./")
+	viper.SetConfigType("yml")
+
+	viper.ReadInConfig()
+	viper.Unmarshal(&Config)
+
 	posts, _ := apiGetWall(1, 0)
 	postsCount := posts["response"].(map[string]interface{})["count"]
 
@@ -126,7 +139,6 @@ func main() {
 			defer wg.Done()
 
 			groupWall, _ := apiGetWall(100, offset)
-
 			for _, item := range groupWall["response"].(map[string]interface{})["items"].([]interface{}) {
 				innerWg.Add(1)
 				/* goroutine for comments */
@@ -135,7 +147,6 @@ func main() {
 
 					if int(item.(map[string]interface{})["comments"].(map[string]interface{})["count"].(float64)) > 0 {
 						comms, _ := apiGetComms(int(item.(map[string]interface{})["id"].(float64)))
-
 						for _, comm := range comms["response"].(map[string]interface{})["items"].([]interface{}) {
 							envelopes += strings.Count(strings.ToLower(comm.(map[string]interface{})["text"].(string)), "энвилоуп")
 						}
